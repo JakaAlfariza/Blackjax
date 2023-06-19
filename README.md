@@ -1,2 +1,2 @@
-# UTS-PBO
-Blackjack Java CLI
+# UAS-PBO
+Blackjack Java CLI - JakaAlfariza
