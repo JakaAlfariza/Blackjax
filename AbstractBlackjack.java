@@ -10,14 +10,16 @@ abstract class AbstractBlackjack {
    
     private Random random;
     public Scanner scanner;
-    public Scanner scanner2;
+    public Scanner scannerNama;
+    public Scanner scannerBet;
 
     public AbstractBlackjack() {
         deck = new ArrayList<>();
         kartuPlayer = new ArrayList<>();
         kartuDealer = new ArrayList<>();
         scanner = new Scanner(System.in);
-        scanner2 = new Scanner(System.in);
+        scannerNama = new Scanner(System.in);
+        scannerBet = new Scanner(System.in);
         random = new Random();
     }
 
@@ -31,21 +33,48 @@ abstract class AbstractBlackjack {
         }
     }
 
-    public void startGame() {
+    public void lanjutkan(){
+        System.out.print("\n\nContinue in... 3");
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.print("\nContinue in... 2");
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.print("\nContinue in... 1");
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void startGame(Taruhan taruhan) {       
+        
+        clearScreen();
+        
+        inputTaruhan(taruhan);
 
         clearScreen();
 
         inisialisasiDeck();
-
         acakDeck();
+
         
         bagikanKartu();
 
         playGame();
 
-        tentukanMenang();
+        tentukanMenang(taruhan);
 
-        pertanyaan();
+        pertanyaan(taruhan);
     }
 
     private void inisialisasiDeck() {
@@ -70,15 +99,46 @@ abstract class AbstractBlackjack {
         return deck.remove(deck.size() - 1);
     }
 
-    private void pertanyaan() {
+    private void pertanyaan(Taruhan taruhan) {
         System.out.print("Do you want to play again? (y/n): ");
         String choice = scanner.next();
 
         if (choice.equalsIgnoreCase("y")) {
             resetGame();
-            startGame();
+            startGame(taruhan);
         } else {
             System.out.println("Thank you for playing! Goodbye.");
+        }
+    }
+
+    public void inputTaruhan(Taruhan taruhan) {
+        clearScreen();
+        System.out.print("Jumlah Chip: " + taruhan.getChip());
+
+        System.out.print("\nMasukkan jumlah taruhan (Min. 50): ");
+        int bet = scannerBet.nextInt();
+
+        if (bet < 50) {
+            System.out.println("\nInput salah");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            inputTaruhan(taruhan);
+        }else if (bet > taruhan.getChip()) {
+            System.out.println("\nChip kurang");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            inputTaruhan(taruhan);
+        } else {
+            taruhan.setBet(bet);
+            taruhan.setChip(taruhan.getChip() - taruhan.getBet());
+            System.out.println("\nSisa Chip: " + taruhan.getChip());
+            lanjutkan();
         }
     }
 
@@ -96,12 +156,15 @@ abstract class AbstractBlackjack {
 
     public abstract int calculateScore(List<Card> hand);
 
-    public abstract void tentukanMenang();
+    public abstract void tentukanMenang(Taruhan taruhan);
 }
 
 //Struktur Kartu
 enum Lambang {
-    SEKOP("S" ), HATI("H"), KERITING("K"), WAJIK("W");
+    SEKOP   ("S" ),
+    HATI    ("H"), 
+    KERITING("K"),
+    WAJIK   ("W");
     
     private final String symbol;
 
@@ -115,8 +178,19 @@ enum Lambang {
 }
 
 enum Nilai {
-    DUA("2 ", 2), TIGA("3 ", 3), EMPAT("4 ", 4), LIMA("5 ", 5), ENAM("6 ", 6), TUJUH("7 ", 7), DELAPAN("8 ", 8), SEMBILAN("9 ", 9),
-    SEPULUH("10", 10), JACK("J ", 10), QUEEN("Q ", 10), KING("K ", 10), AS("A ", 11);
+    DUA     ("2 ", 2),
+    TIGA    ("3 ", 3),
+    EMPAT   ("4 ", 4),
+    LIMA    ("5 ", 5),
+    ENAM    ("6 ", 6),
+    TUJUH   ("7 ", 7),
+    DELAPAN ("8 ", 8),
+    SEMBILAN("9 ", 9),
+    SEPULUH ("10", 10),
+    JACK    ("J ", 10),
+    QUEEN   ("Q ", 10),
+    KING    ("K ", 10),
+    AS      ("A ", 11);
 
     private final String symbol;
     private final int value;
