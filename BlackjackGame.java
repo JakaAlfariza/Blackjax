@@ -21,7 +21,7 @@ public class BlackjackGame extends AbstractBlackjack{
                            + "\t\t      ╚═════════════════╝");
     }
 
-    private void pertanyaan() throws IOException {
+    public void pertanyaan() throws IOException {
         System.out.print("\nKembali ke menu (y): ");
         String choice = scanner.next();
 

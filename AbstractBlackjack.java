@@ -10,14 +10,14 @@ import java.util.Scanner;
 import java.util.StringTokenizer;
 
 abstract class AbstractBlackjack {
-    private List<Card> deck;
+    public List<Card> deck;
     public List<Card> kartuPlayer;
     public List<Card> kartuDealer;
    
-    private Random random;
     public Scanner scanner;
     public Scanner scannerNama;
     public Scanner scannerBet;
+    public Random random;
 
     public AbstractBlackjack() {
         deck = new ArrayList<>();
@@ -66,7 +66,7 @@ abstract class AbstractBlackjack {
             resetGame();
             startGame(nama, taruhan);
         } else {
-            System.out.println("Thank you for playing! Goodbye.");
+            System.out.println("Terima Kasih Telah Bermain Blackjax!.");
         }
     }
 
@@ -88,7 +88,7 @@ abstract class AbstractBlackjack {
         playGame();
 
         tentukanMenang(taruhan);
-        
+
         blackjackGame.hitungHighscore(taruhan);
 
         pertanyaan(nama,taruhan);
@@ -121,7 +121,7 @@ abstract class AbstractBlackjack {
         }
     }
 
-    private void inisialisasiDeck() {
+    public void inisialisasiDeck() {
         for (Lambang Lambang : Lambang.values()) {
             for (Nilai Nilai : Nilai.values()) {
                 Card card = new Card(Nilai, Lambang);
@@ -130,7 +130,7 @@ abstract class AbstractBlackjack {
         }
     }
 
-    private void acakDeck() {
+    public void acakDeck() {
         for (int i = deck.size() - 1; i > 0; i--) {
             int j = random.nextInt(i + 1);
             Card temp = deck.get(i);
@@ -169,10 +169,11 @@ abstract class AbstractBlackjack {
             data = bufferInput.readLine();
         }
 
-        // Sorting highscoreList based on chip count using Comparator   
+        // Sorting
         Comparator<String> chipCountComparator = Comparator.comparingInt(line -> Integer.parseInt(line.split(",")[1]));
         Collections.sort(highscoreList, chipCountComparator.reversed());
 
+        //Tampilkan TOP 10
         for (int i = 0; i < 10; i++) {
             String highscore = highscoreList.get(i);
             StringTokenizer stringToken = new StringTokenizer(highscore, ",");
@@ -183,7 +184,7 @@ abstract class AbstractBlackjack {
         }
     }
 
-    private void resetGame() {
+    public void resetGame() {
         deck.clear();
         kartuPlayer.clear();
         kartuDealer.clear();
