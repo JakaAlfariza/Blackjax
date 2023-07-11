@@ -6,7 +6,7 @@ public class Card {
     public Card(Nilai Nilai, Lambang Lambang) {
         this.Nilai = Nilai;
         this.Lambang = Lambang;
-        this.hidden = false; // By default, cards are not hidden
+        this.hidden = false; //False: kartu terbuka
     }
 
     public Nilai getNilai() {

@@ -1,7 +1,13 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.StringTokenizer;
 
 abstract class AbstractBlackjack {
     private List<Card> deck;
@@ -33,55 +39,93 @@ abstract class AbstractBlackjack {
         }
     }
 
-    public void lanjutkan(){
-        System.out.print("\n\nContinue in... 3");
+    public void sleepThread(int milliseconds) {
         try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        System.out.print("\nContinue in... 2");
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        System.out.print("\nContinue in... 1");
-        try {
-            Thread.sleep(1000);
+            Thread.sleep(milliseconds);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    public void startGame(Taruhan taruhan) {       
-        
+    public void lanjutkan(){
+        System.out.print("\n\nContinue in... 3");
+        sleepThread(1000);
+
+        System.out.print("\nContinue in... 2");
+        sleepThread(1000);
+
+        System.out.print("\nContinue in... 1");
+        sleepThread(1000);
+    }
+
+    private void pertanyaan(String nama, Taruhan taruhan) throws IOException {
+        System.out.print("Ingin Main Lagi? (y/n): ");
+        String choice = scanner.next();
+
+        if (choice.equalsIgnoreCase("y")) {
+            resetGame();
+            startGame(nama, taruhan);
+        } else {
+            System.out.println("Thank you for playing! Goodbye.");
+        }
+    }
+
+    public void startGame(String nama, Taruhan taruhan) throws IOException {
+        BlackjackGame blackjackGame = new BlackjackGame();
+
         clearScreen();
-        
+
         inputTaruhan(taruhan);
 
         clearScreen();
 
         inisialisasiDeck();
+
         acakDeck();
 
-        
         bagikanKartu();
 
         playGame();
 
         tentukanMenang(taruhan);
+        
+        blackjackGame.hitungHighscore(taruhan);
 
-        pertanyaan(taruhan);
+        pertanyaan(nama,taruhan);
+
+        blackjackGame.inputScore(nama, taruhan);
+
+        tampilkanHighScore();
+    }
+
+    public void inputTaruhan(Taruhan taruhan) {
+        clearScreen();
+        System.out.print("Jumlah Chip: " + taruhan.getChip());
+
+        System.out.print("\nMasukkan jumlah taruhan (Min. 50): ");
+        int bet = scannerBet.nextInt();
+
+        if (bet < 50) {
+            System.out.println("\nInput salah");
+            sleepThread(1000);
+            inputTaruhan(taruhan);
+        }else if (bet > taruhan.getChip()) {
+            System.out.println("\nChip kurang");
+            sleepThread(1000);
+            inputTaruhan(taruhan);
+        } else {
+            taruhan.setBet(bet);
+            taruhan.setChip(taruhan.getChip() - taruhan.getBet());
+            System.out.println("\nSisa Chip: " + taruhan.getChip());
+            lanjutkan();
+        }
     }
 
     private void inisialisasiDeck() {
         for (Lambang Lambang : Lambang.values()) {
             for (Nilai Nilai : Nilai.values()) {
                 Card card = new Card(Nilai, Lambang);
-                deck.add(card); // Add card to the current deck
+                deck.add(card);
             }
         }
     }
@@ -99,46 +143,43 @@ abstract class AbstractBlackjack {
         return deck.remove(deck.size() - 1);
     }
 
-    private void pertanyaan(Taruhan taruhan) {
-        System.out.print("Do you want to play again? (y/n): ");
-        String choice = scanner.next();
 
-        if (choice.equalsIgnoreCase("y")) {
-            resetGame();
-            startGame(taruhan);
-        } else {
-            System.out.println("Thank you for playing! Goodbye.");
+    public static void tampilkanHighScore() throws IOException{
+        FileReader fileInput;
+        BufferedReader bufferInput;
+
+        try {
+            fileInput = new FileReader("highscore.txt");
+            bufferInput = new BufferedReader(fileInput);
+        } catch (Exception e) {
+            System.out.println("File highscore tidak ada");
+            return;
         }
-    }
 
-    public void inputTaruhan(Taruhan taruhan) {
-        clearScreen();
-        System.out.print("Jumlah Chip: " + taruhan.getChip());
+        System.out.println("\n     TOP 10  BLACKJAX HIGHSCORE      ");
+        System.out.println("=====================================");
+        System.out.println("No | Nama\t\t| Jumlah Chip ");
+        System.out.println("=====================================");
 
-        System.out.print("\nMasukkan jumlah taruhan (Min. 50): ");
-        int bet = scannerBet.nextInt();
+        String data = bufferInput.readLine();
+        List<String> highscoreList = new ArrayList<>();
+        
+        while (data != null) {
+            highscoreList.add(data);
+            data = bufferInput.readLine();
+        }
 
-        if (bet < 50) {
-            System.out.println("\nInput salah");
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            inputTaruhan(taruhan);
-        }else if (bet > taruhan.getChip()) {
-            System.out.println("\nChip kurang");
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            inputTaruhan(taruhan);
-        } else {
-            taruhan.setBet(bet);
-            taruhan.setChip(taruhan.getChip() - taruhan.getBet());
-            System.out.println("\nSisa Chip: " + taruhan.getChip());
-            lanjutkan();
+        // Sorting highscoreList based on chip count using Comparator   
+        Comparator<String> chipCountComparator = Comparator.comparingInt(line -> Integer.parseInt(line.split(",")[1]));
+        Collections.sort(highscoreList, chipCountComparator.reversed());
+
+        for (int i = 0; i < 10; i++) {
+            String highscore = highscoreList.get(i);
+            StringTokenizer stringToken = new StringTokenizer(highscore, ",");
+            System.out.printf(" %d |", i + 1);
+            System.out.printf(" %s\t\t|", stringToken.nextToken());
+            System.out.printf("    %s", stringToken.nextToken());
+            System.out.println();
         }
     }
 
@@ -156,7 +197,7 @@ abstract class AbstractBlackjack {
 
     public abstract int calculateScore(List<Card> hand);
 
-    public abstract void tentukanMenang(Taruhan taruhan);
+    public abstract void tentukanMenang(Taruhan taruhan) throws IOException;
 }
 
 //Struktur Kartu
