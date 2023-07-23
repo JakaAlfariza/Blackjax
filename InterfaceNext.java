@@ -1,0 +1,3 @@
+interface InterfaceNext {
+    void lanjutkan();
+}

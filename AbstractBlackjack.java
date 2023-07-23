@@ -47,17 +47,6 @@ abstract class AbstractBlackjack {
         }
     }
 
-    public void lanjutkan(){
-        System.out.print("\n\nContinue in... 3");
-        sleepThread(1000);
-
-        System.out.print("\nContinue in... 2");
-        sleepThread(1000);
-
-        System.out.print("\nContinue in... 1");
-        sleepThread(1000);
-    }
-
     private void pertanyaan(String nama, Taruhan taruhan) throws IOException {
         System.out.print("Ingin Main Lagi? (y/n): ");
         String choice = scanner.next();
@@ -114,10 +103,11 @@ abstract class AbstractBlackjack {
             sleepThread(1000);
             inputTaruhan(taruhan);
         } else {
+            Next next = new Next();
             taruhan.setBet(bet);
             taruhan.setChip(taruhan.getChip() - taruhan.getBet());
             System.out.println("\nSisa Chip: " + taruhan.getChip());
-            lanjutkan();
+            next.lanjutkan();
         }
     }
 
@@ -142,7 +132,6 @@ abstract class AbstractBlackjack {
     public Card ambilKartu() {
         return deck.remove(deck.size() - 1);
     }
-
 
     public static void tampilkanHighScore() throws IOException{
         FileReader fileInput;

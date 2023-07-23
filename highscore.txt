@@ -8,3 +8,7 @@ blek,200
 aki,99
 yamato,111
 jekk,300
+DEWA,0
+DEWA,300
+WEDA,250
+JEKK,250

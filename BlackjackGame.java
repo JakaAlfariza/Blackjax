@@ -60,12 +60,14 @@ public class BlackjackGame extends AbstractBlackjack{
     }
 
     public String nama() {
+        
         System.out.print("Masukan nama: ");
         nama = scannerNama.nextLine();
 
         System.out.print("Hallo " + nama + "! Selamat Bermain!");
         sleepThread(1000);
-        lanjutkan();
+        Next next = new Next();
+        next.lanjutkan();
         return nama;
     }
     
